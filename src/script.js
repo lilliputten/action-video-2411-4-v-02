@@ -1,6 +1,6 @@
 // @ts-check
 /* eslint-disable no-console */
-/* globals useLocalVideo, txt_que,txt_vars */
+/* globals useLocalVideo, txt_que,txt_vars, answ */
 /* exported onYouTubePlayerAPIReady */
 
 const buttons = /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.btn'));
@@ -19,12 +19,9 @@ const error = /** @type {HTMLElement} */ (document.querySelector('.error'));
 const videoNode = /** @type {HTMLVideoElement} */ (document.querySelector('video.video'));
 const videoSource = document.createElement('source');
 
-const answ = [1, 3, 2, 2];
-
 // let started = 1;
 let changed = 0;
 // let states = [];
-// let timeout;
 
 let blocked = 0;
 
@@ -157,7 +154,6 @@ function findCounter() {
 let answer = null;
 
 function checkAnswer() {
-  answer = null;
   if (answ[level - 1] == counter + 1) {
     answer = true;
   } else {
@@ -171,6 +167,7 @@ document.addEventListener('click', main);
 function main(ev) {
   const eventTarget = /** @type {HTMLElement} */ (ev.target);
   console.log('[main]', {
+    level,
     blocked,
     changed,
     eventTarget,
@@ -187,14 +184,20 @@ function main(ev) {
     console.log('[main] end (reload)');
     location.reload();
     blocked = 1;
-  } else if (findTarget(ev)) {
-    console.log('[main] other');
+  } else if (findBtnTarget(ev)) {
     blocked = 1;
-    // clearTimeout(timeout);
     changed = 1;
     changeLevel('+');
     findCounter();
     checkAnswer();
+    const isLast = level === ytVideos.length - 1;
+    console.log('[main] button', {
+      counter,
+      target,
+      answer,
+      level,
+      isLast,
+    });
     target.classList.add('selected');
     if (answer == true) {
       comm.innerText = 'Вы ответили правильно!';
@@ -205,9 +208,15 @@ function main(ev) {
     }
     comm.classList.remove('no-op');
     setTimeout(() => {
-      changeVideo();
-      replayVideo();
-      noOp(white);
+      // Don't play video if last one
+      if (!isLast) {
+        changeVideo();
+        replayVideo();
+        noOp(white);
+      } else {
+        blocked = 0;
+        checkFinish();
+      }
     }, 1500);
   } else {
     console.log('[main] else (???)');
@@ -247,7 +256,7 @@ function playerChange() {
 }
 
 /** @param {MouseEvent} ev */
-function findTarget(ev) {
+function findBtnTarget(ev) {
   const eventTarget = /** @type {HTMLElement} */ (ev.target);
   if (eventTarget.classList.contains('btn')) {
     target = eventTarget;
@@ -321,7 +330,9 @@ function checkFinish() {
 }
 
 function handleVideoEnd() {
-  console.log('[handleVideoEnd]');
+  console.log('[handleVideoEnd]', {
+    level,
+  });
   blocked = 0;
   changed = 0;
   checkFinish();

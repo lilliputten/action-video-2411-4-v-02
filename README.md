@@ -6,7 +6,7 @@
 # Universal simple video player support for both youtube and local sources
 
 - Version: 0.0.1
-- Last changes timestamp: 2024.11.11 00:02 +0300
+- Last changes timestamp: 2024.11.11 00:29 +0300
 
 ## Description
 

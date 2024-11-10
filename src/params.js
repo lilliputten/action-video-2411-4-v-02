@@ -1,5 +1,5 @@
 // @ts-check
-/* -exported txt_que, txt_vars */
+/* -exported txt_que, txt_vars, answ */
 /* eslint-disable no-unused-vars */
 
 /** Use youtobe videos (ytVideos) or local (localVideos) */
@@ -30,3 +30,5 @@ const txt_vars = [
   ],
   ['Стерилизацию', 'Очистку', 'Сушку'],
 ];
+
+const answ = [1, 3, 2, 2];
